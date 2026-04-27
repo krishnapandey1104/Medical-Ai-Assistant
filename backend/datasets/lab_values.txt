@@ -1,0 +1,7 @@
+Normal LDL cholesterol: less than 100 mg/dL
+Borderline LDL cholesterol: 130-159 mg/dL
+High LDL cholesterol: above 160 mg/dL
+
+Normal HDL cholesterol: above 40 mg/dL
+
+Normal fasting glucose: 70-99 mg/dL

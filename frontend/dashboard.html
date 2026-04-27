@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediReport — Your Health Partner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="static/css/dashboard.css" />
+    <style></style>
+  </head>
+  <body>
+    <script src="static/js/search.js"></script>
+    <script src="static/js/login.js"></script>
+    <script src="static/js/cart.js"></script>
+    <script src="static/js/product.js"></script>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="navbar-inner">
+        <div class="logo">Medi<span>Report</span></div>
+
+        <div class="location-select">
+          <i class="fa-solid fa-location-dot"></i>
+          <select id="citySelect">
+            <option>Lucknow</option>
+            <option>Delhi</option>
+            <option>Mumbai</option>
+            <option>Bangalore</option>
+            <option>Ballia</option>
+          </select>
+        </div>
+
+        <div class="search-bar">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input
+            id="navSearch"
+            type="text"
+            placeholder="Search medicines, health products..."
+            oninput="filterProducts()"
+          />
+        </div>
+
+        <!-- Logged-out state -->
+        <button
+          class="btn-login"
+          id="loginBtn"
+          onclick="openModal('loginModal')"
+        >
+          Login
+        </button>
+
+        <!-- Logged-in state -->
+        <div class="user-pill" id="userPill" onclick="logoutUser()">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <span class="user-name" id="userName">User</span>
+        </div>
+
+        <button
+          class="cart-btn"
+          onclick="openModal('cartModal')"
+          aria-label="Cart"
+        >
+          <i class="fa-solid fa-cart-shopping"></i>
+          <div class="cart-count" id="cartCount">0</div>
+        </button>
+      </div>
+    </nav>
+
+    <!-- MENU BAR -->
+    <div class="menu-bar">
+      <div class="menu-inner">
+        <a href="#" class="menu-link active" onclick="setMenuActive(this)"
+          >Home</a
+        >
+        <a href="#products" class="menu-link" onclick="setMenuActive(this)"
+          >Buy Medicines</a
+        >
+        <a href="#" class="menu-link" onclick="showComingSoon('Find Doctors')"
+          >Find Doctors</a
+        >
+        <a href="#" class="menu-link" onclick="showComingSoon('Lab Tests')"
+          >Lab Tests</a
+        >
+        <a href="#" class="menu-link" onclick="showComingSoon('Health Records')"
+          >Health Records</a
+        >
+        <a href="#" class="menu-link" onclick="showComingSoon('Buy Insurance')"
+          >Buy Insurance</a
+        >
+      </div>
+    </div>
+
+    <!-- CATEGORY BAR -->
+    <div class="category-bar">
+      <div class="category-inner" id="catBar">
+        <button class="cat-btn active" onclick="filterByCategory('all', this)">
+          All Products
+        </button>
+        <button class="cat-btn" onclick="filterByCategory('baby', this)">
+          Baby Care
+        </button>
+        <button class="cat-btn" onclick="filterByCategory('nutrition', this)">
+          Nutritional Drinks
+        </button>
+        <button class="cat-btn" onclick="filterByCategory('women', this)">
+          Women Care
+        </button>
+        <button class="cat-btn" onclick="filterByCategory('personal', this)">
+          Personal Care
+        </button>
+        <button class="cat-btn" onclick="filterByCategory('ayurveda', this)">
+          Ayurveda
+        </button>
+        <button class="cat-btn" onclick="filterByCategory('devices', this)">
+          Health Devices
+        </button>
+        <button class="cat-btn" onclick="filterByCategory('essentials', this)">
+          Home Essentials
+        </button>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Your Trusted Health Partner</h1>
+        <p>
+          Medicines, lab tests & doctor consultations — all at your doorstep
+        </p>
+        <div class="hero-search">
+          <input
+            id="heroSearch"
+            type="text"
+            placeholder="Search for medicines, vitamins, devices..."
+            oninput="syncHeroSearch()"
+          />
+          <button onclick="doHeroSearch()">
+            <i class="fa-solid fa-magnifying-glass"></i> Search
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features-section">
+      <div class="features-grid">
+        <div
+          class="feat-card"
+          onclick="window.location.href = 'static/upload.html'"
+        >
+          <div class="feat-icon" style="background: #e0f5ef">
+            <i class="fa-solid fa-file-medical" style="color: #0a9e7b"></i>
+          </div>
+          <h3>Upload Prescription</h3>
+          <p>Get medicines delivered</p>
+          <span class="feat-badge">20% off</span>
+        </div>
+        <div class="feat-card" onclick="showComingSoon('Doctor Appointment')">
+          <div class="feat-icon" style="background: #e0e7ff">
+            <i class="fa-solid fa-user-doctor" style="color: #4f46e5"></i>
+          </div>
+          <h3>Doctor Appointment</h3>
+          <p>500+ specialist doctors</p>
+          <span class="feat-badge" style="background: #e0e7ff; color: #3730a3"
+            >Book Now</span
+          >
+        </div>
+        <div class="feat-card" onclick="showComingSoon('Health Insurance')">
+          <div class="feat-icon" style="background: #fef3c7">
+            <i class="fa-solid fa-shield-heart" style="color: #d97706"></i>
+          </div>
+          <h3>Health Insurance</h3>
+          <p>Secure your future</p>
+          <span class="feat-badge" style="background: #fef3c7; color: #92400e"
+            >Explore Plans</span
+          >
+        </div>
+        <div class="feat-card" onclick="showComingSoon('Lab Tests')">
+          <div class="feat-icon" style="background: #fee2e2">
+            <i class="fa-solid fa-flask" style="color: #dc2626"></i>
+          </div>
+          <h3>Lab Tests</h3>
+          <p>Reports in 24 hours</p>
+          <span class="feat-badge" style="background: #fee2e2; color: #991b1b"
+            >At Home</span
+          >
+        </div>
+        <div class="feat-card" onclick="scrollToProducts()">
+          <div class="feat-icon" style="background: #f0fdf4">
+            <i class="fa-solid fa-truck-fast" style="color: #16a34a"></i>
+          </div>
+          <h3>Express Delivery</h3>
+          <p>In under 60 minutes</p>
+          <span class="feat-badge" style="background: #f0fdf4; color: #166534"
+            >Order Now</span
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- CONDITIONS -->
+    <section class="conditions-section">
+      <h2 class="section-title">Browse by Health Condition</h2>
+      <div class="condition-grid">
+        <div class="condition-chip" onclick="filterByCondition('diabetes')">
+          <span>🩺</span>Diabetes Care
+        </div>
+        <div class="condition-chip" onclick="filterByCondition('cardiac')">
+          <span>❤️</span>Cardiac Care
+        </div>
+        <div class="condition-chip" onclick="filterByCondition('stomach')">
+          <span>💊</span>Stomach Care
+        </div>
+        <div class="condition-chip" onclick="filterByCondition('pain')">
+          <span>🦴</span>Pain Relief
+        </div>
+        <div class="condition-chip" onclick="filterByCondition('oral')">
+          <span>🦷</span>Oral Care
+        </div>
+        <div class="condition-chip" onclick="filterByCondition('respiratory')">
+          <span>🫁</span>Respiratory
+        </div>
+        <div class="condition-chip" onclick="filterByCondition('liver')">
+          <span>🟤</span>Liver Care
+        </div>
+        <div class="condition-chip" onclick="filterByCondition('immunity')">
+          <span>🛡️</span>Cold & Immunity
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section class="products-section" id="products">
+      <div class="products-header">
+        <h2 class="section-title" style="margin-bottom: 0">
+          Medicines &amp; Health Products
+        </h2>
+        <span class="products-count" id="prodCount"></span>
+      </div>
+      <div class="products-grid" id="productGrid"></div>
+    </section>
+
+    <!-- ── LOGIN MODAL ── -->
+    <div class="modal-overlay" id="loginModal">
+      <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('loginModal')">
+          ×
+        </button>
+        <div class="login-modal">
+          <div class="login-logo">MediReport</div>
+          <h2>Login for Best Offers</h2>
+          <p class="sub">Get personalised deals & faster checkout</p>
+
+          <!-- Phone step -->
+          <div id="phoneStep">
+            <div class="input-group">
+              <div class="input-prefix">🇮🇳 +91</div>
+              <input
+                type="tel"
+                id="phoneInput"
+                placeholder="Enter 10-digit mobile number"
+                maxlength="10"
+                oninput="this.value = this.value.replace(/\D/g, '')"
+              />
+            </div>
+            <button class="btn-primary" onclick="sendOtp()">Continue →</button>
+            <div class="divider"><span>or continue with</span></div>
+            <button class="google-btn" onclick="googleLogin()">
+              <svg width="18" height="18" viewBox="0 0 48 48">
+                <path
+                  fill="#EA4335"
+                  d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+                />
+                <path
+                  fill="#4285F4"
+                  d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.29-8.16 2.29-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+                />
+              </svg>
+              Sign in with Google
+            </button>
+          </div>
+
+          <!-- OTP step -->
+          <div id="otpStep" class="otp-section">
+            <p
+              style="
+                font-size: 14px;
+                color: var(--gray-400);
+                margin-bottom: 18px;
+              "
+            >
+              Enter the 4-digit OTP sent to +91 <span id="maskedPhone"></span>
+            </p>
+            <div class="otp-inputs">
+              <input
+                type="tel"
+                maxlength="1"
+                class="otp-digit"
+                oninput="otpMove(this, 0)"
+              />
+              <input
+                type="tel"
+                maxlength="1"
+                class="otp-digit"
+                oninput="otpMove(this, 1)"
+              />
+              <input
+                type="tel"
+                maxlength="1"
+                class="otp-digit"
+                oninput="otpMove(this, 2)"
+              />
+              <input
+                type="tel"
+                maxlength="1"
+                class="otp-digit"
+                oninput="otpMove(this, 3)"
+              />
+            </div>
+            <button class="btn-primary" onclick="verifyOtp()">
+              Verify OTP
+            </button>
+            <p
+              style="
+                text-align: center;
+                margin-top: 14px;
+                font-size: 13px;
+                color: var(--gray-400);
+              "
+            >
+              Didn't get OTP?
+              <a href="#" style="color: var(--teal)" onclick="resendOtp(event)"
+                >Resend</a
+              >
+            </p>
+          </div>
+
+          <!-- Success step -->
+          <div class="login-success" id="loginSuccess">
+            <div class="tick">✓</div>
+            <h3
+              style="
+                font-family: var(--font-head);
+                font-size: 18px;
+                margin-top: 10px;
+              "
+            >
+              Login Successful!
+            </h3>
+            <p>Welcome back to MediReport</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CART MODAL ── -->
+    <div class="modal-overlay" id="cartModal">
+      <div class="modal-box cart-modal">
+        <button class="modal-close" onclick="closeModal('cartModal')">×</button>
+        <h2>
+          <i
+            class="fa-solid fa-cart-shopping"
+            style="font-size: 18px; color: var(--teal)"
+          ></i>
+          Your Cart
+        </h2>
+        <div id="cartItems"></div>
+        <div class="cart-footer" id="cartFooter" style="display: none">
+          <div class="cart-total">
+            <span>Total Amount</span>
+            <span id="cartTotal">₹0</span>
+          </div>
+          <button class="btn-checkout" onclick="checkout()">
+            Proceed to Checkout →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <!-- CHATBOT -->
+    <!-- 💬 CHAT BUTTON -->
+    <button id="chat-toggle">💬 AI Health Chat</button>
+
+    <!-- 💬 CHAT BOX -->
+    <div id="chatbox" style="display: none">
+      <div id="chat-header">
+        AI Health Assistant
+        <span id="chat-close" style="float: right; cursor: pointer">✖</span>
+      </div>
+
+      <div id="chat-messages"></div>
+
+      <div class="chat-input">
+        <input id="user-input" placeholder="Ask medical question..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">Medi<span>Report</span></div>
+          <p class="footer-desc">
+            Your trusted health partner. Medicines, lab tests, and doctor
+            consultations delivered to your door across India.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li>About Us</li>
+            <li>Careers</li>
+            <li>Press</li>
+            <li>FAQs</li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Services</h4>
+          <ul>
+            <li>Doctor Consultation</li>
+            <li>Lab Tests</li>
+            <li>Pharmacy</li>
+            <li>Health Records</li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li>Privacy Policy</li>
+            <li>Terms of Service</li>
+            <li>Return Policy</li>
+            <li>Contact Us</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 MediReport. All rights reserved.</span>
+        <span>Made with ❤️ in India</span>
+      </div>
+    </footer>
+
+    <script>
+      // ═══════════════════════════════════════════
+      //  PRODUCT DATA
+      // ═══════════════════════════════════════════
+      // ═══════════════════════════════════════════
+      //  RENDER PRODUCTS
+      // ═══════════════════════════════════════════
+
+      // ═══════════════════════════════════════════
+      //  CART LOGIC
+      // ═══════════════════════════════════════════
+
+      // ═══════════════════════════════════════════
+      //  LOGIN
+      // ═══════════════════════════════════════════
+
+      // ═══════════════════════════════════════════
+      //  SEARCH & FILTER
+      // ═══════════════════════════════════════════
+
+      // ═══════════════════════════════════════════
+      //  MENU & MISC
+      // ═══════════════════════════════════════════
+      function setMenuActive(el) {
+        document
+          .querySelectorAll('.menu-link')
+          .forEach((a) => a.classList.remove('active'));
+        el.classList.add('active');
+      }
+
+      function showComingSoon(feature) {
+        showToast(`${feature} — Coming Soon! 🚀`);
+      }
+
+      // ═══════════════════════════════════════════
+      //  TOAST
+      // ═══════════════════════════════════════════
+      let toastTimer;
+      function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+      }
+
+      // ═══════════════════════════════════════════
+      //  CHATBOT (Claude API)
+      // ═══════════════════════════════════════════
+
+      // ═══════════════════════════════════════════
+      //  INIT
+      // ═══════════════════════════════════════════
+      window.addEventListener('DOMContentLoaded', () => {
+        renderProducts();
+        updateCartCount();
+        if (localStorage.getItem('isLoggedIn')) {
+          const phone = localStorage.getItem('userPhone') || 'User';
+          updateLoginState(phone);
+        }
+
+        // CHAT
+        const toggleBtn = document.getElementById('chat-toggle');
+        const chatbox = document.getElementById('chatbox');
+        const closeBtn = document.getElementById('chat-close');
+
+        toggleBtn.onclick = () => {
+          chatbox.style.display =
+            chatbox.style.display === 'flex' ? 'none' : 'flex';
+        };
+
+        closeBtn.onclick = () => {
+          chatbox.style.display = 'none';
+        };
+      });
+
+      // SEARCH
+      function searchMedicine(id) {
+        let input = document.getElementById(id).value.toLowerCase();
+        let cards = document.querySelectorAll('.medicine-card');
+
+        cards.forEach((card) => {
+          card.style.display = card.textContent.toLowerCase().includes(input)
+            ? 'block'
+            : 'none';
+        });
+      }
+    </script>
+
+    <!-- CHAT SCRIPT -->
+    <script src="/static/js/chatbot.js"></script>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+# ----------------------------
+# Backend API
+# ----------------------------
+fastapi
+uvicorn
+python-multipart
+
+# ----------------------------
+# LLM (Ollama client)
+# ----------------------------
+ollama
+requests
+
+# ----------------------------
+# RAG (Hospital-grade)
+# ----------------------------
+chromadb
+sentence-transformers
+transformers
+torch
+
+# ----------------------------
+# OCR / PDF Processing
+# ----------------------------
+pytesseract
+Pillow
+PyMuPDF
+
+# ----------------------------
+# Environment Variables
+# ----------------------------
+python-dotenv
+
+# ----------------------------
+# Security (Auth)
+# ----------------------------
+bcrypt
+
+# ----------------------------
+# PDF Generation
+# ----------------------------
+reportlab

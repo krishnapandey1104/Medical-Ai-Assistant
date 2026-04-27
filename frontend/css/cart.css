@@ -1,0 +1,348 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf8f5;
+      --surface: #ffffff;
+      --accent: #c8522a;
+      --accent-light: #f5ece8;
+      --text: #1a1611;
+      --muted: #8a8070;
+      --border: #e8e2d8;
+      --success: #2d7a4f;
+      --radius: 14px;
+      --shadow: 0 2px 20px rgba(0,0,0,0.06);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .header-badge {
+      background: var(--accent);
+      color: white;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    /* ── LAYOUT ── */
+    .page {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 28px;
+      align-items: start;
+    }
+
+    @media (max-width: 760px) {
+      .page { grid-template-columns: 1fr; padding: 20px 16px; }
+      header { padding: 16px 20px; }
+    }
+
+    /* ── SECTION TITLES ── */
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      margin-bottom: 6px;
+    }
+
+    .section-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 22px;
+    }
+
+    /* ── CART ITEMS ── */
+    .cart-list { display: flex; flex-direction: column; gap: 14px; }
+
+    .cart-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      transition: box-shadow 0.2s, transform 0.2s;
+      animation: slideIn 0.3s ease both;
+    }
+
+    .cart-item:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .item-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: var(--accent-light);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+
+    .item-body { flex: 1; min-width: 0; }
+
+    .item-name {
+      font-weight: 500;
+      font-size: 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item-price {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 3px 0 10px;
+    }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .qty-box {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .qty-btn {
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--text);
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qty-btn:hover { background: var(--accent-light); }
+
+    .qty-num {
+      width: 32px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .item-subtotal {
+      font-weight: 500;
+      font-size: 15px;
+    }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      padding: 0;
+      transition: color 0.15s;
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .remove-btn:hover { color: var(--accent); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 60px 30px;
+      text-align: center;
+      animation: slideIn 0.3s ease;
+    }
+
+    .empty-icon { font-size: 52px; margin-bottom: 16px; }
+    .empty-state h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 8px; }
+    .empty-state p { color: var(--muted); font-size: 14px; }
+
+    /* ── SIDEBAR ── */
+    .sidebar { display: flex; flex-direction: column; gap: 16px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+    }
+
+    .card-title {
+      font-weight: 500;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    /* ── COUPON ── */
+    .coupon-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .coupon-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+      background: var(--bg);
+    }
+
+    .coupon-input:focus { border-color: var(--accent); }
+
+    .btn-apply {
+      padding: 10px 16px;
+      background: var(--text);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-apply:hover { opacity: 0.8; }
+
+    .coupon-msg {
+      font-size: 12px;
+      margin-top: 8px;
+      min-height: 16px;
+      transition: all 0.2s;
+    }
+
+    .coupon-msg.success { color: var(--success); }
+    .coupon-msg.error   { color: var(--accent); }
+
+    /* ── ORDER SUMMARY ── */
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      padding: 5px 0;
+      color: var(--muted);
+    }
+
+    .summary-row.total {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      padding-top: 14px;
+      margin-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+
+    .discount-line { color: var(--success); }
+
+    /* ── CHECKOUT BTN ── */
+    .btn-checkout {
+      width: 100%;
+      padding: 15px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-checkout:hover { background: #b04520; }
+    .btn-checkout:active { transform: scale(0.98); }
+    .btn-checkout:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+
+    /* ── CLEAR CART ── */
+    .btn-clear {
+      width: 100%;
+      padding: 10px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .btn-clear:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--text);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    #toast.show { opacity: 1; transform: translateY(0); }

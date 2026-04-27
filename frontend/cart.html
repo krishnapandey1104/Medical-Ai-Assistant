@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+ <link rel="stylesheet" href="static/css/cart.css">
+  <style>
+    
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="#">Bazaar</a>
+  <span class="header-badge" id="headerCount">0 items</span>
+</header>
+
+<div class="page">
+
+  <!-- LEFT: Cart Items -->
+  <div>
+    <h1 class="section-title">Your Cart</h1>
+    <p class="section-sub" id="itemCountLabel">Loading...</p>
+    <div class="cart-list" id="cartItems"></div>
+  </div>
+
+  <!-- RIGHT: Sidebar -->
+  <div class="sidebar">
+
+    <!-- Coupon -->
+    <div class="card">
+      <div class="card-title">Promo Code</div>
+      <div class="coupon-row">
+        <input class="coupon-input" id="couponInput" type="text" placeholder="e.g. SAVE10" />
+        <button class="btn-apply" onclick="applyCoupon()">Apply</button>
+      </div>
+      <div class="coupon-msg" id="couponMsg"></div>
+    </div>
+
+    <!-- Summary -->
+    <div class="card">
+      <div class="card-title">Order Summary</div>
+
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span id="subtotal">₹0</span>
+      </div>
+      <div class="summary-row" id="discountRow" style="display:none">
+        <span class="discount-line">Discount</span>
+        <span class="discount-line" id="discountAmt"></span>
+      </div>
+      <div class="summary-row">
+        <span>Delivery</span>
+        <span id="deliveryFee">₹0</span>
+      </div>
+      <div class="summary-row total">
+        <span>Total</span>
+        <span id="totalPrice">₹0</span>
+      </div>
+
+      <button class="btn-checkout" id="checkoutBtn" onclick="checkout()" disabled>
+        <i class="fa fa-lock" style="font-size:13px"></i> Proceed to Checkout
+      </button>
+    </div>
+
+    <button class="btn-clear" onclick="clearCart()">
+      <i class="fa fa-trash" style="font-size:12px"></i> Clear Cart
+    </button>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  // ── VALID COUPONS ──
+  const COUPONS = {
+    'SAVE10': 10,
+    'FLAT50': 50,
+    'WELCOME20': 20
+  };
+
+  const DELIVERY_THRESHOLD = 500; // free delivery above this
+
+  // ── Bug Fix: use id as key, fallback to name if no id ──
+  // Seed demo data if cart is empty (for demo purposes)
+  let cart = JSON.parse(localStorage.getItem("medi_cart")) || [];
+
+  let discountPct = 0;
+
+  // ── RENDER ──
+  function renderCart() {
+    const container = document.getElementById("cartItems");
+    container.innerHTML = "";
+
+    if (cart.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🛒</div>
+          <h3>Your cart is empty</h3>
+          <p>Add some items to get started!</p>
+        </div>`;
+      updateSummary(0);
+      document.getElementById("itemCountLabel").textContent = "No items yet";
+      document.getElementById("headerCount").textContent = "0 items";
+      document.getElementById("checkoutBtn").disabled = true;
+      return;
+    }
+
+    let totalQty = 0;
+    cart.forEach((item, idx) => {
+      totalQty += item.qty;
+      const div = document.createElement("div");
+      div.className = "cart-item";
+      div.style.animationDelay = (idx * 60) + "ms";
+
+      // XSS fix: use textContent via DOM, not innerHTML interpolation for user data
+      div.innerHTML = `
+        <div class="item-img">${escapeEmoji(item.emoji) || '📦'}</div>
+        <div class="item-body">
+          <div class="item-name"></div>
+          <div class="item-price"></div>
+          <div class="item-row">
+            <div class="qty-box">
+              <button class="qty-btn" data-action="dec" data-idx="${idx}">−</button>
+              <span class="qty-num">${item.qty}</span>
+              <button class="qty-btn" data-action="inc" data-idx="${idx}">+</button>
+            </div>
+            <div class="item-subtotal"></div>
+          </div>
+          <button class="remove-btn" data-idx="${idx}">
+            <i class="fa fa-xmark"></i> Remove
+          </button>
+        </div>`;
+
+      // Set text safely
+      div.querySelector(".item-name").textContent = item.name;
+      div.querySelector(".item-price").textContent = "₹" + item.price + " each";
+      div.querySelector(".item-subtotal").textContent = "₹" + (item.price * item.qty);
+
+      container.appendChild(div);
+    });
+
+    // Delegate events
+    container.querySelectorAll(".qty-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = +btn.dataset.idx;
+        if (btn.dataset.action === "inc") increaseQty(idx);
+        else decreaseQty(idx);
+      });
+    });
+
+    container.querySelectorAll(".remove-btn").forEach(btn => {
+      btn.addEventListener("click", () => removeItem(+btn.dataset.idx));
+    });
+
+    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    document.getElementById("itemCountLabel").textContent =
+      totalQty + (totalQty === 1 ? " item in your cart" : " items in your cart");
+    document.getElementById("headerCount").textContent = totalQty + " item" + (totalQty !== 1 ? "s" : "");
+    document.getElementById("checkoutBtn").disabled = false;
+    updateSummary(total);
+  }
+
+  function escapeEmoji(e) { return e || ""; }
+
+  function updateSummary(subtotal) {
+    const discount = Math.round(subtotal * discountPct / 100);
+    const delivery = subtotal > 0 && subtotal < DELIVERY_THRESHOLD ? 49 : 0;
+    const total = subtotal - discount + delivery;
+
+    document.getElementById("subtotal").textContent = "₹" + subtotal;
+    document.getElementById("deliveryFee").textContent =
+      subtotal === 0 ? "₹0" : delivery === 0 ? "FREE 🎉" : "₹" + delivery;
+    document.getElementById("totalPrice").textContent = "₹" + total;
+
+    const discRow = document.getElementById("discountRow");
+    if (discount > 0) {
+      discRow.style.display = "flex";
+      document.getElementById("discountAmt").textContent = "−₹" + discount;
+    } else {
+      discRow.style.display = "none";
+    }
+  }
+
+  // ── CART OPERATIONS ──
+  function increaseQty(idx) {
+    cart[idx].qty++;
+    saveCart(); renderCart();
+  }
+
+  function decreaseQty(idx) {
+    cart[idx].qty--;
+    if (cart[idx].qty === 0) cart.splice(idx, 1);
+    saveCart(); renderCart();
+  }
+
+  function removeItem(idx) {
+    const name = cart[idx].name;
+    cart.splice(idx, 1);
+    saveCart(); renderCart();
+    showToast(`"${name}" removed`);
+  }
+
+  function clearCart() {
+    if (cart.length === 0) return;
+    cart = [];
+    discountPct = 0;
+    document.getElementById("couponInput").value = "";
+    document.getElementById("couponMsg").textContent = "";
+    saveCart(); // Bug fix: was missing
+    renderCart();
+    showToast("Cart cleared");
+  }
+
+  // Bug fix: saveCart was not called in original clearCart
+  function saveCart() {
+    localStorage.setItem("medi_cart", JSON.stringify(cart));
+  }
+
+  // ── COUPON ──
+  function applyCoupon() {
+    const code = document.getElementById("couponInput").value.trim().toUpperCase();
+    const msg = document.getElementById("couponMsg");
+
+    if (!code) {
+      msg.textContent = "Please enter a promo code.";
+      msg.className = "coupon-msg error";
+      return;
+    }
+
+    if (COUPONS[code] !== undefined) {
+      discountPct = COUPONS[code];
+      msg.textContent = `✓ "${code}" applied — ${discountPct}% off!`;
+      msg.className = "coupon-msg success";
+      renderCart();
+      showToast(`${discountPct}% discount applied!`);
+    } else {
+      discountPct = 0;
+      msg.textContent = "Invalid promo code. Try SAVE10, FLAT50 or WELCOME20.";
+      msg.className = "coupon-msg error";
+      renderCart();
+    }
+  }
+
+  // Press Enter on coupon input
+  document.getElementById("couponInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") applyCoupon();
+  });
+
+  // ── CHECKOUT ──
+  function checkout() {
+    showToast("Proceeding to checkout… 🛍️");
+  }
+
+  // ── TOAST ──
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2800);
+  }
+
+  renderCart();
+</script>
+</body>
+</html>

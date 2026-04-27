@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Prescription — MediReport</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root {
+  --teal: #0a9e7b;
+  --teal-dark: #077a5f;
+  --teal-light: #e0f5ef;
+  --teal-mid: #b2e8da;
+  --navy: #0d2b45;
+  --white: #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-800: #1e293b;
+  --red: #e53935;
+  --amber: #f59e0b;
+  --green: #16a34a;
+  --font-head: 'Sora', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 20px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.07);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); color: var(--gray-800); background: var(--gray-50); min-height: 100vh; }
+
+/* ── NAVBAR ── */
+.navbar {
+  background: var(--white); border-bottom: 1px solid var(--gray-200);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+}
+.navbar-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; gap: 16px; padding: 14px 20px;
+}
+.logo { font-family: var(--font-head); font-size: 20px; font-weight: 700; color: var(--teal); }
+.logo span { color: var(--navy); }
+.back-btn {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--gray-500); text-decoration: none; font-size: 14px; font-weight: 500;
+  padding: 7px 14px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm);
+  transition: all .2s; margin-left: auto;
+}
+.back-btn:hover { border-color: var(--teal); color: var(--teal); background: var(--teal-light); }
+.cart-btn {
+  position: relative; background: var(--teal-light); border: none;
+  width: 40px; height: 40px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .2s;
+}
+.cart-btn:hover { background: var(--teal-mid); }
+.cart-btn i { color: var(--teal); font-size: 16px; }
+.cart-count {
+  position: absolute; top: -5px; right: -5px;
+  background: var(--red); color: white; font-size: 10px; font-weight: 700;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-family: var(--font-head);
+}
+
+/* ── PAGE HERO ── */
+.page-hero {
+  background: linear-gradient(135deg, var(--navy) 0%, #0f3d5c 55%, #087a60 100%);
+  padding: 48px 20px; text-align: center; position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: '';  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230a9e7b' fill-opacity='0.06'%3E%3Cpath d='M50 50c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10zM10 10c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10c0 5.523-4.477 10-10 10S0 25.523 0 20s4.477-10 10-10z'/%3E%3C/g%3E%3C/svg%3E");
+}
+.page-hero-content { position: relative; }
+.page-hero .badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(10,158,123,.25); color: #7fffd4; border: 1px solid rgba(10,158,123,.4);
+  font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 50px;
+  margin-bottom: 16px; font-family: var(--font-head); letter-spacing: 0.5px;
+}
+.page-hero h1 {
+  font-family: var(--font-head); font-size: clamp(24px, 4vw, 36px); font-weight: 700;
+  color: white; margin-bottom: 10px; line-height: 1.2;
+}
+.page-hero p { color: rgba(255,255,255,0.6); font-size: 15px; max-width: 480px; margin: 0 auto; }
+.discount-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #fef9c3; color: #854d0e; font-size: 13px; font-weight: 700;
+  padding: 6px 16px; border-radius: 50px; margin-top: 18px;
+}
+
+/* ── STEPS INDICATOR ── */
+.steps-bar {
+  background: var(--white); border-bottom: 1px solid var(--gray-200);
+}
+.steps-inner {
+  max-width: 640px; margin: 0 auto;
+  display: flex; align-items: center; padding: 18px 20px; gap: 0;
+}
+.step {
+  display: flex; align-items: center; gap: 8px; flex: 1;
+}
+.step-dot {
+  width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--gray-300);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: var(--gray-400); flex-shrink: 0;
+  font-family: var(--font-head); transition: all .3s;
+}
+.step-dot.done { background: var(--teal); border-color: var(--teal); color: white; }
+.step-dot.active { border-color: var(--teal); color: var(--teal); background: var(--teal-light); }
+.step-label { font-size: 12px; font-weight: 500; color: var(--gray-400); transition: color .3s; }
+.step-label.active { color: var(--teal); font-weight: 600; }
+.step-label.done { color: var(--gray-600); }
+.step-line { flex: 1; height: 2px; background: var(--gray-200); margin: 0 8px; border-radius: 2px; transition: background .3s; }
+.step-line.done { background: var(--teal); }
+
+/* ── MAIN CONTENT ── */
+.main { max-width: 1100px; margin: 0 auto; padding: 36px 20px 60px; }
+
+/* ── PANELS ── */
+.panel {
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg); padding: 32px; margin-bottom: 24px;
+  box-shadow: var(--shadow);
+  animation: fadeIn .35s ease;
+}
+@keyframes fadeIn { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform:none; } }
+
+/* ── UPLOAD ZONE ── */
+#dropZone {
+  border: 2.5px dashed var(--gray-300); border-radius: var(--radius);
+  padding: 52px 24px; text-align: center; cursor: pointer;
+  transition: all .25s; background: var(--gray-50); position: relative;
+}
+#dropZone:hover, #dropZone.dragover {
+  border-color: var(--teal); background: var(--teal-light);
+}
+#dropZone.dragover .drop-icon { transform: scale(1.15); }
+.drop-icon {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--teal-light); display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px; font-size: 28px; color: var(--teal); transition: transform .25s;
+}
+#dropZone h3 { font-family: var(--font-head); font-size: 17px; font-weight: 600; color: var(--gray-800); margin-bottom: 6px; }
+#dropZone p { font-size: 13px; color: var(--gray-400); line-height: 1.6; }
+#dropZone input[type=file] { display: none; }
+.upload-formats {
+  display: flex; gap: 8px; justify-content: center; margin-top: 16px; flex-wrap: wrap;
+}
+.fmt-chip {
+  font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px;
+  background: var(--gray-100); color: var(--gray-500); border: 1px solid var(--gray-200);
+}
+
+/* Upload method tabs */
+.upload-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+.upload-tab {
+  flex: 1; padding: 10px; border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm); background: white; cursor: pointer;
+  font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--gray-500);
+  display: flex; align-items: center; justify-content: center; gap: 8px; transition: all .2s;
+}
+.upload-tab:hover { border-color: var(--teal-mid); color: var(--teal); }
+.upload-tab.active { border-color: var(--teal); background: var(--teal-light); color: var(--teal); font-weight: 600; }
+.upload-tab i { font-size: 15px; }
+
+/* Preview */
+#previewArea { display: none; }
+.preview-wrap {
+  position: relative; border-radius: var(--radius); overflow: hidden;
+  border: 2px solid var(--teal-mid); background: var(--gray-50);
+}
+.preview-wrap img, .preview-wrap iframe {
+  width: 100%; max-height: 320px; object-fit: contain; display: block;
+}
+.preview-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,.35);
+  display: flex; align-items: center; justify-content: center; gap: 12px; opacity: 0;
+  transition: opacity .2s;
+}
+.preview-wrap:hover .preview-overlay { opacity: 1; }
+.preview-action {
+  background: white; border: none; padding: 9px 18px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;
+  transition: background .2s;
+}
+.preview-action:hover { background: var(--teal-light); color: var(--teal); }
+.file-info {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  background: var(--teal-light); border-radius: 0 0 var(--radius) var(--radius);
+}
+.file-info i { color: var(--teal); }
+.file-info span { font-size: 13px; color: var(--teal-dark); font-weight: 500; flex: 1; }
+.file-info small { font-size: 11px; color: var(--gray-400); }
+
+/* ── PATIENT FORM ── */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 13px; font-weight: 500; color: var(--gray-600); }
+.form-group input, .form-group select, .form-group textarea {
+  border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+  padding: 10px 14px; font-family: var(--font-body); font-size: 14px; color: var(--gray-800);
+  outline: none; transition: border-color .2s; background: white;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  border-color: var(--teal); box-shadow: 0 0 0 3px rgba(10,158,123,.1);
+}
+.form-group textarea { resize: vertical; min-height: 80px; }
+
+/* ── ANALYZE BUTTON ── */
+.btn-analyze {
+  width: 100%; padding: 15px; background: var(--teal); color: white; border: none;
+  border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-top: 8px;
+}
+.btn-analyze:hover:not(:disabled) { background: var(--teal-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(10,158,123,.35); }
+.btn-analyze:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ── ANALYZING STATE ── */
+#analyzingPanel { display: none; }
+.pulse-wrap { display: flex; flex-direction: column; align-items: center; padding: 32px 0; }
+.pulse-ring {
+  width: 80px; height: 80px; border-radius: 50%;
+  border: 3px solid var(--teal-light); border-top-color: var(--teal);
+  animation: spin 1s linear infinite; margin-bottom: 20px;
+  position: relative; display: flex; align-items: center; justify-content: center;
+}
+.pulse-ring::after {
+  content: '🩺'; font-size: 24px; animation: none;
+  position: absolute; animation: spinReverse 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spinReverse { to { transform: rotate(-360deg); } }
+.analyzing-text { font-family: var(--font-head); font-size: 17px; font-weight: 600; color: var(--gray-800); margin-bottom: 6px; }
+.analyzing-sub { font-size: 13px; color: var(--gray-400); }
+.progress-bar-wrap { width: 100%; max-width: 300px; height: 6px; background: var(--gray-100); border-radius: 3px; margin-top: 20px; overflow: hidden; }
+.progress-bar { height: 100%; background: var(--teal); border-radius: 3px; width: 0%; transition: width .4s ease; }
+
+/* ── RESULTS ── */
+#resultsPanel { display: none; }
+.result-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+  padding-bottom: 20px; border-bottom: 1px solid var(--gray-100);
+}
+.result-icon {
+  width: 48px; height: 48px; border-radius: 50%; background: #dcfce7;
+  display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+}
+.result-header h2 { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--gray-800); }
+.result-header p { font-size: 13px; color: var(--gray-400); margin-top: 3px; }
+
+  
+/* AI Summary box (UPDATED BIG + SCROLLABLE) */
+.ai-summary {
+  background: linear-gradient(135deg, #f0fdf9 0%, #e8f8f3 100%);border: 1px solid var(--teal-mid);
+  border-radius: var(--radius);
+  padding: 22px 24px;margin-bottom: 24px;display: flex;gap: 14px;align-items: flex-start;
+  width: 100%;              /* FULL WIDTH */
+  min-height: 180px;        /* MIN SIZE */
+  max-height: 420px;        /* SCROLL LIMIT */
+  overflow-y: auto;         /* SCROLL ENABLE */
+}
+
+/* TEXT INSIDE SUMMARY */
+.ai-summary-text {
+  font-size: 15.5px;        /* BIGGER TEXT */
+  color: var(--gray-700);
+  line-height: 1.8;         /* BETTER READABILITY */
+  white-space: pre-wrap;    /* KEEP FORMAT */
+}
+
+/* TITLE STYLE */
+.ai-summary-text strong {color: var(--teal-dark);font-family: var(--font-head);font-size: 16px;
+}
+
+/* SCROLLBAR (OPTIONAL PREMIUM LOOK) */
+.ai-summary::-webkit-scrollbar {
+  width: 6px;
+}
+.ai-summary::-webkit-scrollbar-thumb {
+  background: var(--teal-mid);border-radius: 10px;
+}
+
+/* Medicine cards in results */
+.medicine-results { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+.med-result-card {
+  border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 16px 18px;
+  display: flex; align-items: center; gap: 16px; transition: all .2s; background: white;
+}
+.med-result-card:hover { border-color: var(--teal-mid); box-shadow: var(--shadow); }
+.med-result-card.added { border-color: var(--teal); background: var(--teal-light); }
+.med-check {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 2px solid var(--gray-200); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; transition: all .2s; font-size: 16px;
+  background: white;
+}
+.med-check.checked { background: var(--teal); border-color: var(--teal); color: white; }
+.med-result-info { flex: 1; }
+.med-result-name { font-family: var(--font-head); font-size: 15px; font-weight: 600; color: var(--gray-800); }
+.med-result-detail { font-size: 12px; color: var(--gray-400); margin-top: 3px; }
+.med-result-dosage {
+  font-size: 12px; color: var(--teal-dark); font-weight: 600;
+  background: var(--teal-light); padding: 3px 10px; border-radius: 20px; margin-top: 6px; display: inline-block;
+}
+.med-result-right { text-align: right; flex-shrink: 0; }
+.med-price { font-family: var(--font-head); font-size: 17px; font-weight: 700; color: var(--teal-dark); }
+.med-mrp { font-size: 12px; color: var(--gray-400); text-decoration: line-through; }
+.med-disc { font-size: 12px; color: var(--green); font-weight: 600; }
+.med-unavailable { font-size: 12px; color: var(--gray-400); font-style: italic; }
+.med-qty-control {
+  display: flex; align-items: center; gap: 6px; margin-top: 8px;
+}
+.med-qty-btn {
+  width: 26px; height: 26px; border: 1.5px solid var(--teal); border-radius: 6px;
+  background: white; color: var(--teal); font-weight: 700; font-size: 14px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s;
+}
+.med-qty-btn:hover { background: var(--teal); color: white; }
+.med-qty-val { font-weight: 700; font-size: 14px; width: 24px; text-align: center; }
+
+/* Not found med */
+.not-found-card {
+  border: 1px dashed var(--gray-300); border-radius: var(--radius); padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px; background: var(--gray-50);
+}
+.not-found-card .med-result-name { color: var(--gray-500); }
+.not-found-badge { font-size: 11px; background: #fee2e2; color: #991b1b; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+
+/* Add all to cart btn */
+.results-actions { display: flex; gap: 12px; }
+.btn-add-all {
+  flex: 1; padding: 13px; background: var(--teal); color: white; border: none;
+  border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-add-all:hover { background: var(--teal-dark); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(10,158,123,.35); }
+.btn-new {
+  padding: 13px 22px; background: white; color: var(--gray-600); border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all .2s;
+}
+.btn-new:hover { border-color: var(--teal); color: var(--teal); background: var(--teal-light); }
+
+/* ── NOTES PANEL ── */
+.notes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.note-item {
+  display: flex; gap: 12px; padding: 14px; background: var(--gray-50);
+  border: 1px solid var(--gray-200); border-radius: var(--radius-sm);
+}
+.note-item i { color: var(--teal); font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+.note-item h4 { font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 3px; }
+.note-item p { font-size: 12px; color: var(--gray-400); line-height: 1.5; }
+
+/* ── SECTION TITLE ── */
+.panel-title {
+  font-family: var(--font-head); font-size: 16px; font-weight: 700; color: var(--gray-800);
+  margin-bottom: 18px; display: flex; align-items: center; gap: 10px;
+}
+.panel-title i { color: var(--teal); }
+
+/* ── CART MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 999;
+  background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
+  align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: white; border-radius: var(--radius-lg); width: 100%; max-width: 440px;
+  margin: 20px; animation: modalIn .25s ease; position: relative;
+}
+@keyframes modalIn { from { opacity:0; transform: translateY(20px) scale(.97); } to { opacity:1; transform:none; } }
+.modal-close {
+  position: absolute; top: 14px; right: 14px; width: 32px; height: 32px;
+  border-radius: 50%; border: none; background: var(--gray-100); color: var(--gray-600);
+  cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center;
+}
+.modal-close:hover { background: var(--gray-200); }
+.cart-modal-inner { padding: 26px 26px; max-height: 75vh; overflow-y: auto; }
+.cart-modal-inner h2 { font-family: var(--font-head); font-size: 19px; font-weight: 700; margin-bottom: 20px; }
+.cart-item-row {
+  display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--gray-100);
+}
+.cart-item-row:last-child { border-bottom: none; }
+.ci-name { font-size: 14px; font-weight: 600; color: var(--gray-800); }
+.ci-price { font-size: 12px; color: var(--teal-dark); font-weight: 600; margin-top: 2px; }
+.ci-qty-wrap { display: flex; align-items: center; gap: 8px; }
+.ci-qty-btn {
+  width: 26px; height: 26px; border: 1.5px solid var(--gray-200); border-radius: 6px;
+  background: white; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; transition: all .15s; color: var(--gray-600);
+}
+.ci-qty-btn:hover { border-color: var(--teal); color: var(--teal); }
+.ci-qty-num { font-weight: 700; font-size: 14px; width: 22px; text-align: center; }
+.cart-empty-state { text-align: center; padding: 40px 0; color: var(--gray-400); }
+.cart-empty-state i { font-size: 36px; margin-bottom: 10px; display: block; }
+.cart-footer-wrap { margin-top: 18px; }
+.cart-total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.cart-total-row span:first-child { font-size: 15px; color: var(--gray-600); }
+.cart-total-row span:last-child { font-family: var(--font-head); font-size: 22px; font-weight: 700; color: var(--teal-dark); }
+.btn-checkout {
+  width: 100%; padding: 13px; background: var(--teal); color: white; border: none;
+  border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: background .2s;
+}
+.btn-checkout:hover { background: var(--teal-dark); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--navy); color: white; padding: 12px 24px; border-radius: var(--radius);
+  font-size: 14px; font-weight: 500; z-index: 9999;
+  transition: transform .3s ease; pointer-events: none; white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── CAMERA PANEL ── */
+#cameraPanel { display: none; }
+.camera-wrap {
+  border-radius: var(--radius); overflow: hidden; background: black;
+  position: relative; max-height: 300px;
+}
+#videoFeed { width: 100%; display: block; max-height: 300px; object-fit: cover; }
+.camera-controls { display: flex; gap: 10px; margin-top: 12px; }
+.btn-capture {
+  flex: 1; padding: 12px; background: var(--teal); color: white; border: none;
+  border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-capture:hover { background: var(--teal-dark); }
+.btn-cancel-cam {
+  padding: 12px 20px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+  background: white; font-family: var(--font-body); font-size: 14px; cursor: pointer;
+  transition: all .2s;
+}
+.btn-cancel-cam:hover { border-color: var(--red); color: var(--red); }
+#captureCanvas { display: none; }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <div class="logo">Medi<span>Report</span></div>
+    <a href="/" class="back-btn">
+      <i class="fa-solid fa-arrow-left"></i> Back to Home
+    </a>
+    <button class="cart-btn" onclick="openCartModal()" aria-label="Cart">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <div class="cart-count" id="cartCount">0</div>
+    </button>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-content">
+    <div class="badge"><i class="fa-solid fa-shield-check"></i> 100% Secure & Confidential</div>
+    <h1>Upload Your Prescription</h1>
+    <p>Our AI reads your prescription and finds the right medicines — instantly</p>
+    <div class="discount-pill">
+      <i class="fa-solid fa-tag"></i> Get 20% off on all prescription medicines
+    </div>
+  </div>
+</section>
+
+<!-- STEPS BAR -->
+<div class="steps-bar">
+  <div class="steps-inner" id="stepsBar">
+    <div class="step">
+      <div class="step-dot active" id="dot1">1</div>
+      <span class="step-label active" id="lbl1">Upload</span>
+    </div>
+    <div class="step-line" id="line1"></div>
+    <div class="step">
+      <div class="step-dot" id="dot2">2</div>
+      <span class="step-label" id="lbl2">Analysis</span>
+    </div>
+    <div class="step-line" id="line2"></div>
+    <div class="step">
+      <div class="step-dot" id="dot3">3</div>
+      <span class="step-label" id="lbl3">Medicines</span>
+    </div>
+    <div class="step-line" id="line3"></div>
+    <div class="step">
+      <div class="step-dot" id="dot4">4</div>
+      <span class="step-label" id="lbl4">Add to Cart</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ── UPLOAD PANEL ── -->
+  <div class="panel" id="uploadPanel">
+    <h2 class="panel-title"><i class="fa-solid fa-file-medical"></i> Upload Prescription</h2>
+
+    <div class="upload-tabs">
+      <button class="upload-tab active" id="tabFile" onclick="switchTab('file')">
+        <i class="fa-solid fa-upload"></i> Upload File
+      </button>
+      <button class="upload-tab" id="tabCamera" onclick="switchTab('camera')">
+        <i class="fa-solid fa-camera"></i> Use Camera
+      </button>
+    </div>
+
+    <!-- File Upload -->
+    <div id="fileTab">
+      <div id="dropZone" onclick="document.getElementById('reportFile').click()"
+        ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+        <div class="drop-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+        <h3>Drag & drop your prescription here</h3>
+        <p>or click to browse your files</p>
+        <div class="upload-formats">
+          <span class="fmt-chip">JPG</span>
+          <span class="fmt-chip">PNG</span>
+          <span class="fmt-chip">PDF</span>
+          <span class="fmt-chip">HEIC</span>
+          <span class="fmt-chip">Up to 10 MB</span>
+        </div>
+        <input type="file" id="reportFile" accept="image/*,.pdf" onchange="handleFileSelect(event)">
+      </div>
+
+      <div id="previewArea">
+        <div class="preview-wrap" id="previewWrap">
+          <img id="previewImg" src="" alt="Prescription preview" style="display:none;">
+          <div class="preview-overlay">
+            <button class="preview-action" onclick="document.getElementById('reportFile').click()">
+              <i class="fa-solid fa-arrows-rotate"></i> Change
+            </button>
+          </div>
+          <div class="file-info">
+            <i class="fa-solid fa-file-image"></i>
+            <span id="fileName">prescription.jpg</span>
+            <small id="fileSize">—</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Camera Tab -->
+    <div id="cameraPanel">
+      <div class="camera-wrap">
+        <video id="videoFeed" autoplay playsinline muted></video>
+      </div>
+      <canvas id="captureCanvas"></canvas>
+      <div class="camera-controls">
+        <button class="btn-capture" onclick="capturePhoto()">
+          <i class="fa-solid fa-camera"></i> Capture Photo
+        </button>
+        <button class="btn-cancel-cam" onclick="stopCamera()">
+          <i class="fa-solid fa-xmark"></i> Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PATIENT DETAILS ── -->
+  <div class="panel" id="patientPanel">
+    <h2 class="panel-title"><i class="fa-solid fa-user-injured"></i> Patient Details <span style="font-size:12px;font-weight:400;color:var(--gray-400);margin-left:6px;">(Optional)</span></h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Patient Name</label>
+        <input type="text" id="patientName" placeholder="e.g. Rahul Sharma">
+      </div>
+      <div class="form-group">
+        <label>Age</label>
+        <input type="number" id="patientAge" placeholder="e.g. 32" min="1" max="120">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Doctor's Name</label>
+        <input type="text" id="doctorName" placeholder="e.g. Dr. Priya Kapoor">
+      </div>
+      <div class="form-group">
+        <label>Prescription Date</label>
+        <input type="date" id="prescDate">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label>Additional Notes</label>
+      <textarea id="notes" placeholder="Any allergies or additional info for the pharmacist..."></textarea>
+    </div>
+  </div>
+
+  <!-- ── ANALYZE BUTTON ── -->
+  <button class="btn-analyze" id="analyzeBtn" onclick=" uploadReport()">
+    <i class="fa-solid fa-wand-magic-sparkles"></i> Analyse Prescription with AI
+  </button>
+  <div id = "resultBox"></div>
+
+  <!-- ── ANALYZING PANEL ── -->
+  <div class="panel" id="analyzingPanel">
+    <div class="pulse-wrap">
+      <div class="pulse-ring"></div>
+      <p class="analyzing-text" id="analyzingText">Reading your prescription…</p>
+      <p class="analyzing-sub" id="analyzingSub">Our AI is identifying medicines and dosages</p>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RESULTS PANEL ── -->
+  <div class="panel" id="resultsPanel">
+    <div class="result-header">
+      <div class="result-icon">✅</div>
+      <div>
+        <h2>Prescription Analysed Successfully</h2>
+        <p id="resultSubtitle">Found medicines from your prescription</p>
+      </div>
+    </div>
+
+    <div class="ai-summary" id="aiSummaryBox">
+      <i class="fa-solid fa-robot"></i>
+      <div class="ai-summary-text" id="aiSummaryText">AI analysis complete.</div>
+    </div>
+
+    <h3 class="panel-title" style="margin-bottom:14px;"><i class="fa-solid fa-pills"></i> Identified Medicines</h3>
+    <div class="medicine-results" id="medicineResultsList"></div>
+
+    <div class="results-actions">
+      <button class="btn-add-all" onclick="addAllToCart()">
+        <i class="fa-solid fa-cart-plus"></i> Add All Available to Cart
+      </button>
+      <button class="btn-new" onclick="resetPage()">
+        <i class="fa-solid fa-arrows-rotate"></i> New
+      </button>
+    </div>
+  </div>
+
+  <!-- ── NOTES / TIPS ── -->
+  <div class="panel" id="tipsPanel">
+    <h2 class="panel-title"><i class="fa-solid fa-circle-info"></i> Good to Know</h2>
+    <div class="notes-grid">
+      <div class="note-item">
+        <i class="fa-solid fa-lock"></i>
+        <div>
+          <h4>Your data is private</h4>
+          <p>Prescriptions are processed securely and never stored without your consent.</p>
+        </div>
+      </div>
+      <div class="note-item">
+        <i class="fa-solid fa-user-doctor"></i>
+        <div>
+          <h4>Always consult a doctor</h4>
+          <p>AI identification is an aid — always follow your doctor's instructions.</p>
+        </div>
+      </div>
+      <div class="note-item">
+        <i class="fa-solid fa-truck-fast"></i>
+        <div>
+          <h4>Same-day delivery</h4>
+          <p>Order before 3 PM for same-day delivery in Lucknow.</p>
+        </div>
+      </div>
+      <div class="note-item">
+        <i class="fa-solid fa-tag"></i>
+        <div>
+          <h4>20% prescription discount</h4>
+          <p>All medicines ordered via prescription get an automatic 20% discount.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- CART MODAL -->
+<div class="modal-overlay" id="cartModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeCartModal()">×</button>
+    <div class="cart-modal-inner">
+      <h2><i class="fa-solid fa-cart-shopping" style="color:var(--teal);font-size:18px;"></i> Your Cart</h2>
+      <div id="cartItemsInner"></div>
+      <div id="cartFooterInner" style="display:none;">
+        <div class="cart-total-row">
+          <span>Total</span>
+          <span id="cartTotalAmt">₹0</span>
+        </div>
+        <button class="btn-checkout" onclick="checkout()">Proceed to Checkout →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════
+//  PRODUCT CATALOG (shared with dashboard)
+// ═══════════════════════════════════════
+const catalog = [
+  { id:1, name:"Dolo 650", brand:"Micro Labs", price:30, mrp:35, keywords:["dolo","paracetamol","paracetamol 650","dolo 650"] },
+  { id:2, name:"Crocin Advance", brand:"GSK", price:45, mrp:50, keywords:["crocin","paracetamol 500","crocin advance"] },
+  { id:3, name:"Azithromycin 500mg", brand:"Cipla", price:120, mrp:150, keywords:["azithromycin","azee","zithromax","azi"] },
+  { id:4, name:"Glycomet 500", brand:"USV", price:38, mrp:45, keywords:["glycomet","metformin","glucophage","metformin 500"] },
+  { id:5, name:"Omeprazole 20mg", brand:"Sun Pharma", price:55, mrp:70, keywords:["omeprazole","omez","prilosec","omeprazole 20"] },
+  { id:6, name:"Cetirizine 10mg", brand:"Cipla", price:25, mrp:30, keywords:["cetirizine","zyrtec","cetrizine","cetirizine 10"] },
+  { id:7, name:"Volini Gel 30g", brand:"Sanofi", price:115, mrp:135, keywords:["volini","diclofenac gel","volini gel"] },
+  { id:8, name:"Burnol Cream", brand:"Boots", price:85, mrp:95, keywords:["burnol","burnol cream"] },
+  { id:9, name:"Himalaya Septilin", brand:"Himalaya", price:130, mrp:155, keywords:["septilin","himalaya septilin"] },
+  { id:10, name:"Dabur Chyawanprash", brand:"Dabur", price:260, mrp:295, keywords:["chyawanprash","chyawanprash","dabur"] },
+  { id:11, name:"Ensure Nutrition", brand:"Abbott", price:740, mrp:830, keywords:["ensure","nutritional supplement"] },
+  { id:12, name:"Protinex Original", brand:"Danone", price:490, mrp:550, keywords:["protinex","protein supplement"] },
+  { id:16, name:"Glucometer FreeStyle", brand:"Abbott", price:1299, mrp:1599, keywords:["glucometer","freestyle","blood glucose monitor"] },
+  { id:17, name:"BP Monitor Digital", brand:"Omron", price:2199, mrp:2799, keywords:["bp monitor","blood pressure monitor","omron"] },
+  { id:18, name:"Liv 52 DS", brand:"Himalaya", price:150, mrp:175, keywords:["liv 52","liv52","hepatoprotective"] },
+  { id:19, name:"Vicks VapoRub 25g", brand:"P&G", price:75, mrp:88, keywords:["vicks","vaporub","vicks vaporub"] },
+  { id:20, name:"Sensodyne Toothpaste", brand:"GSK", price:160, mrp:190, keywords:["sensodyne","sensitive toothpaste"] },
+  { id:21, name:"Amoxicillin 500mg", brand:"GSK", price:95, mrp:115, keywords:["amoxicillin","amoxil","amox"] },
+  { id:22, name:"Pantoprazole 40mg", brand:"Sun Pharma", price:65, mrp:80, keywords:["pantoprazole","pan 40","pantocid"] },
+  { id:23, name:"Atorvastatin 10mg", brand:"Cipla", price:85, mrp:100, keywords:["atorvastatin","atorva","lipitor","statin"] },
+  { id:24, name:"Metoprolol 25mg", brand:"Sun Pharma", price:72, mrp:88, keywords:["metoprolol","betaloc","lopressor"] },
+  { id:25, name:"Losartan 50mg", brand:"Sun Pharma", price:90, mrp:108, keywords:["losartan","cozaar","angiotensin"] },
+  { id:26, name:"Montair 10", brand:"Cipla", price:145, mrp:168, keywords:["montelukast","montair","singulair"] },
+  { id:27, name:"Vitamin D3 1000 IU", brand:"Alkem", price:180, mrp:210, keywords:["vitamin d","vitamin d3","d3","cholecalciferol"] },
+  { id:28, name:"Vitamin B12 500mcg", brand:"Mankind", price:95, mrp:115, keywords:["vitamin b12","b12","methylcobalamin","cobalamin"] },
+];
+
+// Cart
+let cart = JSON.parse(localStorage.getItem("medi_cart")) || [];
+
+function saveCart() {
+  localStorage.setItem("medi_cart", JSON.stringify(cart));
+  updateCartCount();
+}
+
+function updateCartCount() {
+  const total = cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById("cartCount").textContent = total;
+}
+
+function addToCartById(id, name, price, qty = 1) {
+  const item = cart.find(c => c.id === id);
+  if (item) { item.qty += qty; }
+  else { cart.push({ id, name, price, qty }); }
+  saveCart();
+  updateCartCount();
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(c => c.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) cart = cart.filter(c => c.id !== id);
+  saveCart();
+  renderCartModal();
+}
+
+// ═══════════════════════════════════════
+//  FILE UPLOAD
+// ═══════════════════════════════════════
+let uploadedFile = null;
+let uploadedBase64 = null;
+let uploadedMimeType = null;
+
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById("dropZone").classList.add("dragover");
+}
+
+function handleDragLeave() {
+  document.getElementById("dropZone").classList.remove("dragover");
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById("dropZone").classList.remove("dragover");
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file);
+}
+
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) processFile(file);
+}
+
+function processFile(file) {
+  if (file.size > 10 * 1024 * 1024) { showToast("File too large. Max 10MB allowed."); return; }
+  uploadedFile = file;
+  uploadedMimeType = file.type || "image/jpeg";
+  document.getElementById("fileName").textContent = file.name;
+  document.getElementById("fileSize").textContent = formatBytes(file.size);
+  
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const result = ev.target.result;
+    uploadedBase64 = result.split(',')[1];
+    
+    const img = document.getElementById("previewImg");
+    img.src = result;
+    img.style.display = "block";
+    
+    document.getElementById("dropZone").style.display = "none";
+    document.getElementById("previewArea").style.display = "block";
+    document.getElementById("analyzeBtn").disabled = false;
+    showToast("Prescription uploaded ✓");
+  };
+  reader.readAsDataURL(file);
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + " B";
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + " KB";
+  return (bytes/1024/1024).toFixed(1) + " MB";
+}
+
+// ═══════════════════════════════════════
+//  CAMERA
+// ═══════════════════════════════════════
+let stream = null;
+
+function switchTab(tab) {
+  document.getElementById("tabFile").classList.toggle("active", tab === "file");
+  document.getElementById("tabCamera").classList.toggle("active", tab === "camera");
+  document.getElementById("fileTab").style.display = tab === "file" ? "block" : "none";
+  document.getElementById("cameraPanel").style.display = tab === "camera" ? "block" : "none";
+  if (tab === "camera") startCamera();
+  else stopCamera();
+}
+
+async function startCamera() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+    document.getElementById("videoFeed").srcObject = stream;
+  } catch {
+    showToast("Camera access denied. Please allow camera permission.");
+    switchTab("file");
+  }
+}
+
+function stopCamera() {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  document.getElementById("cameraPanel").style.display = "none";
+  document.getElementById("fileTab").style.display = "block";
+  document.getElementById("tabFile").classList.add("active");
+  document.getElementById("tabCamera").classList.remove("active");
+}
+
+function capturePhoto() {
+  const video = document.getElementById("videoFeed");
+  const canvas = document.getElementById("captureCanvas");
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext("2d").drawImage(video, 0, 0);
+  const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+  uploadedBase64 = dataUrl.split(',')[1];
+  uploadedMimeType = "image/jpeg";
+  stopCamera();
+
+  const img = document.getElementById("previewImg");
+  img.src = dataUrl;
+  img.style.display = "block";
+  document.getElementById("dropZone").style.display = "none";
+  document.getElementById("previewArea").style.display = "block";
+  document.getElementById("fileName").textContent = "camera_capture.jpg";
+  document.getElementById("fileSize").textContent = "Captured";
+  document.getElementById("analyzeBtn").disabled = false;
+  showToast("Photo captured ✓");
+}
+
+// ═══════════════════════════════════════
+//  STEPS UI
+// ═══════════════════════════════════════
+function setStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById(`dot${i}`);
+    const lbl = document.getElementById(`lbl${i}`);
+    if (i < n) { dot.className = "step-dot done"; dot.innerHTML = "✓"; lbl.className = "step-label done"; }
+    else if (i === n) { dot.className = "step-dot active"; dot.textContent = i; lbl.className = "step-label active"; }
+    else { dot.className = "step-dot"; dot.textContent = i; lbl.className = "step-label"; }
+  }
+  for (let i = 1; i <= 3; i++) {
+    document.getElementById(`line${i}`).className = `step-line${i <= n - 1 ? " done" : ""}`;
+  }
+}
+
+// ═══════════════════════════════════════
+//  ANALYSE PRESCRIPTION
+// ═══════════════════════════════════════
+let extractedMeds = [];
+
+// async function analyzePrescription() {
+//   if (!uploadedBase64) { showToast("Please upload a prescription first."); return; }
+//   setStep(2);
+
+//   document.getElementById("uploadPanel").style.display = "none";
+//   document.getElementById("patientPanel").style.display = "none";
+//   document.getElementById("analyzeBtn").style.display = "none";
+//   document.getElementById("analyzingPanel").style.display = "block";
+//   document.getElementById("tipsPanel").scrollIntoView({ behavior: "smooth" });
+
+//   // animate progress
+//   const bar = document.getElementById("progressBar");
+//   const texts = [
+//     ["Reading prescription image…", "Detecting handwriting and printed text"],
+//     ["Identifying medicine names…", "Matching against drug database"],
+//     ["Extracting dosages…", "Finding frequency and duration info"],
+//     ["Preparing results…", "Almost done!"]
+//   ];
+//   let pct = 0;
+//   let ti = 0;
+//   const interval = setInterval(() => {
+//     pct = Math.min(pct + Math.random() * 18, 90);
+//     bar.style.width = pct + "%";
+//     if (ti < texts.length) {
+//       document.getElementById("analyzingText").textContent = texts[ti][0];
+//       document.getElementById("analyzingSub").textContent = texts[ti][1];
+//       ti++;
+//     }
+//   }, 900);
+
+//   try {
+//     const res = await fetch("https://api.anthropic.com/v1/messages", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         model: "claude-sonnet-4-20250514",
+//         max_tokens: 1000,
+//         system: `You are a pharmaceutical AI assistant. Analyze prescription images and return ONLY a valid JSON object, no markdown, no explanation. Extract all medicines mentioned.
+
+// Return this exact format:
+// {
+//   "summary": "1-2 sentence human-readable summary of what you see in the prescription",
+//   "patientName": "extracted patient name or null",
+//   "doctorName": "extracted doctor name or null",
+//   "medicines": [
+//     {
+//       "name": "exact medicine name as written",
+//       "genericName": "generic/chemical name",
+//       "dosage": "dosage e.g. 500mg",
+//       "frequency": "e.g. twice daily",
+//       "duration": "e.g. 5 days",
+//       "instructions": "e.g. after meals"
+//     }
+//   ]
+// }
+
+// If no valid prescription is found, return: {"error": "No prescription detected", "medicines": []}`,
+//         messages: [{
+//           role: "user",
+//           content: [
+//             { type: "image", source: { type: "base64", media_type: uploadedMimeType, data: uploadedBase64 } },
+//             { type: "text", text: "Analyze this prescription image and extract all medicine details. Return only the JSON object." }
+//           ]
+//         }]
+//       })
+//     });
+
+//     clearInterval(interval);
+//     bar.style.width = "100%";
+
+//     const data = await res.json();
+//     const rawText = data.content?.[0]?.text || "{}";
+//     let parsed;
+//     try {
+//       const clean = rawText.replace(/```json|```/g, "").trim();
+//       parsed = JSON.parse(clean);
+//     } catch {
+//       parsed = { medicines: [], summary: "Could not fully parse the prescription. Showing mock results." };
+//     }
+
+//     await new Promise(r => setTimeout(r, 500));
+//     showResults(parsed);
+
+//   } catch (err) {
+//     clearInterval(interval);
+//     // Fallback demo results
+//     showResults({
+//       summary: "Prescription contains common medicines for a respiratory infection with fever. Please verify with your pharmacist.",
+//       medicines: [
+//         { name: "Azithromycin 500mg", genericName: "azithromycin", dosage: "500mg", frequency: "Once daily", duration: "5 days", instructions: "After meals" },
+//         { name: "Dolo 650", genericName: "paracetamol", dosage: "650mg", frequency: "Thrice daily", duration: "3 days", instructions: "As needed for fever" },
+//         { name: "Cetirizine 10mg", genericName: "cetirizine", dosage: "10mg", frequency: "Once at night", duration: "7 days", instructions: "Before sleep" },
+//         { name: "Vitamin D3", genericName: "vitamin d3", dosage: "1000 IU", frequency: "Once daily", duration: "30 days", instructions: "After breakfast" },
+//         { name: "Ranitidine 150mg", genericName: "ranitidine", dosage: "150mg", frequency: "Twice daily", duration: "5 days", instructions: "Before meals" }
+//       ]
+//     });
+//   }
+// }
+
+// ═══════════════════════════════════════
+//  SHOW RESULTS
+// ═══════════════════════════════════════
+function matchCatalog(med) {
+  const searchStr = (med.name + " " + (med.genericName || "")).toLowerCase();
+  let best = null;
+  for (const prod of catalog) {
+    for (const kw of prod.keywords) {
+      if (searchStr.includes(kw) || kw.includes(searchStr.split(" ")[0])) {
+        best = prod; break;
+      }
+    }
+    if (best) break;
+  }
+  return best;
+}
+
+function showResults(parsed) {
+  document.getElementById("analyzingPanel").style.display = "none";
+  document.getElementById("resultsPanel").style.display = "block";
+  setStep(3);
+
+  // Summary
+  if (parsed.summary) {
+    document.getElementById("aiSummaryText").innerHTML =
+      `<strong>AI Summary:</strong> ${parsed.summary}`;
+  }
+
+  const meds = parsed.medicines || [];
+  document.getElementById("resultSubtitle").textContent =
+    `Found ${meds.length} medicine${meds.length !== 1 ? "s" : ""} in your prescription`;
+
+  extractedMeds = meds.map(med => ({ ...med, catalogItem: matchCatalog(med), qty: 1, selected: true }));
+
+  renderMedicineResults();
+  setStep(4);
+  document.getElementById("resultsPanel").scrollIntoView({ behavior: "smooth" });
+}
+
+function renderMedicineResults() {
+  const list = document.getElementById("medicineResultsList");
+  list.innerHTML = extractedMeds.map((med, i) => {
+    const c = med.catalogItem;
+    if (c) {
+      const disc = Math.round((1 - c.price / c.mrp) * 100);
+      const discPrice = Math.round(c.price * 0.8); // 20% prescription discount
+      return `<div class="med-result-card ${med.selected ? 'added' : ''}" id="medCard${i}">
+        <div class="med-check ${med.selected ? 'checked' : ''}" onclick="toggleMed(${i})">${med.selected ? '✓' : ''}</div>
+        <div class="med-result-info">
+          <div class="med-result-name">${med.name}</div>
+          <div class="med-result-detail">${c.brand} — ${med.dosage || ''}</div>
+          <div class="med-result-dosage">${med.frequency || ''}${med.duration ? ' · ' + med.duration : ''}${med.instructions ? ' · ' + med.instructions : ''}</div>
+        </div>
+        <div class="med-result-right">
+          <div class="med-price">₹${discPrice}</div>
+          <div class="med-mrp">₹${c.mrp}</div>
+          <div class="med-disc">20% off applied</div>
+          <div class="med-qty-control">
+            <button class="med-qty-btn" onclick="medQty(${i},-1)">−</button>
+            <span class="med-qty-val" id="medQty${i}">${med.qty}</span>
+            <button class="med-qty-btn" onclick="medQty(${i},1)">+</button>
+          </div>
+        </div>
+      </div>`;
+    } else {
+      return `<div class="not-found-card">
+        <div style="flex:1;">
+          <div class="med-result-name">${med.name}</div>
+          <div style="font-size:12px;color:var(--gray-400);margin-top:3px;">${med.dosage||''} ${med.frequency||''}</div>
+        </div>
+        <span class="not-found-badge">Not in stock</span>
+      </div>`;
+    }
+  }).join('');
+}
+
+function toggleMed(i) {
+  extractedMeds[i].selected = !extractedMeds[i].selected;
+  renderMedicineResults();
+}
+
+function medQty(i, delta) {
+  extractedMeds[i].qty = Math.max(1, extractedMeds[i].qty + delta);
+  document.getElementById(`medQty${i}`).textContent = extractedMeds[i].qty;
+}
+
+function addAllToCart() {
+  let count = 0;
+  extractedMeds.forEach(med => {
+    if (med.selected && med.catalogItem) {
+      const discPrice = Math.round(med.catalogItem.price * 0.8);
+      addToCartById(med.catalogItem.id, med.name, discPrice, med.qty);
+      count++;
+    }
+  });
+  if (count > 0) {
+    showToast(`✓ ${count} medicine${count>1?'s':''} added to cart at 20% off!`);
+    setTimeout(() => openCartModal(), 800);
+  } else {
+    showToast("Select at least one available medicine.");
+  }
+}
+
+// ═══════════════════════════════════════
+//  CART MODAL
+// ═══════════════════════════════════════
+function openCartModal() {
+  document.getElementById("cartModal").classList.add("open");
+  renderCartModal();
+}
+
+function closeCartModal() {
+  document.getElementById("cartModal").classList.remove("open");
+}
+
+document.getElementById("cartModal").addEventListener("click", e => {
+  if (e.target === document.getElementById("cartModal")) closeCartModal();
+});
+
+function renderCartModal() {
+  const el = document.getElementById("cartItemsInner");
+  const footer = document.getElementById("cartFooterInner");
+  if (!cart.length) {
+    el.innerHTML = `<div class="cart-empty-state"><i class="fa-solid fa-cart-shopping"></i><p>Your cart is empty</p></div>`;
+    footer.style.display = "none";
+    return;
+  }
+  footer.style.display = "block";
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  document.getElementById("cartTotalAmt").textContent = `₹${total}`;
+  el.innerHTML = cart.map(item => `
+    <div class="cart-item-row">
+      <div style="flex:1;">
+        <div class="ci-name">${item.name}</div>
+        <div class="ci-price">₹${item.price} × ${item.qty}</div>
+      </div>
+      <div class="ci-qty-wrap">
+        <button class="ci-qty-btn" onclick="changeQty(${item.id},-1)">−</button>
+        <span class="ci-qty-num">${item.qty}</span>
+        <button class="ci-qty-btn" onclick="changeQty(${item.id},1)">+</button>
+      </div>
+    </div>`).join('');
+}
+
+function checkout() {
+  showToast("🎉 Order placed successfully!");
+  cart = []; saveCart(); renderCartModal();
+  setTimeout(() => closeCartModal(), 600);
+}
+
+// ═══════════════════════════════════════
+//  RESET
+// ═══════════════════════════════════════
+function resetPage() {
+
+    uploadedFile = null;
+    uploadedBase64 = null;
+    uploadedMimeType = null;
+
+    document.getElementById("uploadPanel").style.display = "block";
+    document.getElementById("patientPanel").style.display = "block";
+
+    document.getElementById("analyzeBtn").style.display = "flex";
+    document.getElementById("analyzeBtn").disabled = true;
+
+    document.getElementById("analyzingPanel").style.display = "none";
+    document.getElementById("resultsPanel").style.display = "none";
+
+    document.getElementById("dropZone").style.display = "block";
+    document.getElementById("previewArea").style.display = "none";
+
+    document.getElementById("previewImg").src = "";
+
+    //  FIXED INPUT RESET
+    const input = document.getElementById("reportFile");
+    if (input) input.value = "";
+
+    document.getElementById("progressBar").style.width = "0%";
+
+    setStep(1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ═══════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2800);
+}
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+window.addEventListener("DOMContentLoaded", () => {
+  updateCartCount();
+  setStep(1);
+  // Set today's date as default
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById("prescDate").value = today;
+});
+</script>
+
+<script src="/static/js/upload.js"></script>
+
+</body>
+</html>
