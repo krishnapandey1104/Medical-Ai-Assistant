@@ -2,9 +2,6 @@ version: "3.9"
 
 services:
 
-  # =========================
-  # OLLAMA (LLM ENGINE)
-  # =========================
   ollama:
     image: ollama/ollama
     container_name: ollama
@@ -15,28 +12,18 @@ services:
     volumes:
       - ollama_data:/root/.ollama
 
-    restart: always
+    command: serve
 
-    entrypoint: ["/bin/sh", "-c"]
-    command: >
-      ollama serve &
-      echo "⏳ Waiting for Ollama..." &&
-      until ollama list > /dev/null 2>&1; do sleep 2; done &&
-      ollama pull llama3:latest &&
-      ollama pull phi3:latest &&
-      echo "✅ Models ready" &&
-      wait
+    restart: unless-stopped
 
     healthcheck:
       test: ["CMD", "ollama", "list"]
-      interval: 10s
-      timeout: 5s
+      interval: 15s
+      timeout: 10s
       retries: 5
+      start_period: 40s
 
 
-  # =========================
-  # FASTAPI BACKEND
-  # =========================
   medical-ai:
     build:
       context: ..
@@ -56,13 +43,14 @@ services:
 
     environment:
       - PYTHONUNBUFFERED=1
-      - DOCKER_ENV=true   # ✅ FIXED
+      - DOCKER_ENV=true
+      - OLLAMA_BASE_URL=http://ollama:11434
 
     depends_on:
       ollama:
-        condition: service_healthy   # ✅ better than simple depends_on
+        condition: service_healthy
 
-    restart: always
+    restart: unless-stopped
 
 
 volumes:

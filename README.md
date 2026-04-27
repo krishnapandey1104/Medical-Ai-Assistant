@@ -68,7 +68,9 @@ TESSERACT_PATH=/usr/bin/tesseract
 # Start Containers
 Bash
 cd docker
-docker-compose up --build
+docker-compose up -d --build
+docker exec -it ollama ollama pull llama3
+docker exec -it ollama ollama pull phi3
 
 # Open App
 
