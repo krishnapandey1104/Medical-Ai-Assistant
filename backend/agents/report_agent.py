@@ -65,55 +65,71 @@ async def analyze_report_agent(file):
         # UNIVERSAL STRUCTURED PROMPT (FINAL)
         # =====================================================
         prompt = f"""
-        You are an advanced AI Medical Assistant.
+You are a highly accurate AI Medical Assistant.
 
-        Analyze ANY type of medical report (lab report, prescription, scan, etc.)
+Your task is to analyze ANY medical report (blood test, prescription, scan, discharge summary, etc.)
+and explain EVERYTHING in simple, easy-to-understand language.
 
-        STRICT FORMAT:
+-------------------------------------
 
-        🧾 Summary:
-        (1–3 line summary)
+STRICT OUTPUT FORMAT (VERY IMPORTANT):
 
-        📊 Key Findings:
-        - Parameter / Observation: Value
-        - Include all important values dynamically
+🧾 Summary:
+Explain what this report is about in 2-3 simple lines.
 
-        📈 Interpretation:
-        (Simple explanation in plain language)
+📊 Key Findings:
+Write each finding on a NEW LINE:
+- Test / Observation → Value (Status if available)
 
-        ⚠️ Abnormalities / Concerns:
-        (List abnormal findings, or "None identified")
+📈 Interpretation:
+Explain what these findings mean in simple language.
+Write in SHORT LINES (not long paragraphs).
 
-        💊 Medications:
-        (List medicines if present, otherwise "Not mentioned")
+⚠️ Abnormalities / Concerns:
+- List only abnormal or important issues
+- If none → write: None
 
-        💡 Recommendations:
-        (General safe advice only)
+💊 Medicines (ONLY IF PRESENT OR NEEDED):
+- If medicines are written in report → list them
+- If report suggests condition where medicine may be needed → suggest common medicines (safe, general only)
+- If not applicable → write: Not required
 
-        👉 Next Steps:
-        (Doctor consultation or next actions)
+💡 Recommendations:
+Write practical advice in POINTS (each on new line):
+- Diet / lifestyle / precautions
 
-        -------------------------------------
+👉 Next Steps:
+Write clear next actions:
+- Doctor visit / tests / monitoring
 
-        Report Text:
-        {text}
+-------------------------------------
 
-        Extracted Values:
-        {table_summary}
+Report Text:
+{text}
 
-        Abnormal Findings:
-        {abnormal_text}
+Extracted Values:
+{table_summary}
 
-        Trends:
-        {trend_text}
+Abnormal Findings:
+{abnormal_text}
 
-        IMPORTANT RULES:
-        - Do NOT leave any section empty
-        - If missing → "Not mentioned in report"
-        - Do NOT hallucinate
-        - Keep output clean and structured
-        """
+Trends:
+{trend_text}
 
+-------------------------------------
+
+IMPORTANT RULES:
+
+- Each heading MUST be followed by content on NEW LINES (no big paragraphs)
+- Keep language SIMPLE (like explaining to a non-medical person)
+- DO NOT leave any section empty
+- If data missing → write "Not mentioned in report"
+- DO NOT guess diseases
+- DO NOT hallucinate values
+- Medicines should be suggested ONLY when appropriate (not always)
+
+-------------------------------------
+"""
         # =====================================================
         #  LLM CALL
         # =====================================================

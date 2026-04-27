@@ -607,6 +607,18 @@ body { font-family: var(--font-body); color: var(--gray-800); background: var(--
     <i class="fa-solid fa-wand-magic-sparkles"></i> Analyse Prescription with AI
   </button>
   <div id = "resultBox"></div>
+  
+<style>
+#resultBox {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 15px;
+    border-radius: 10px;
+    background: #f8fafc;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+</style>
 
   <!-- ── ANALYZING PANEL ── -->
   <div class="panel" id="analyzingPanel">

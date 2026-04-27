@@ -2,7 +2,12 @@ import requests
 import os
 from backend.config import MODELS, GEN_CONFIG
 
-OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+if os.getenv("DOCKER_ENV"):
+    OLLAMA_URL = "http://ollama:11434"
+else:
+    OLLAMA_URL = "http://localhost:11434"
+
+print(f"🔗 Ollama URL: {OLLAMA_URL}")
 
 
 # =========================================================

@@ -27,13 +27,19 @@ services:
       echo "✅ Models ready" &&
       wait
 
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 
   # =========================
   # FASTAPI BACKEND
   # =========================
   medical-ai:
     build:
-      context: ..                       # IMPORTANT
+      context: ..
       dockerfile: docker/Dockerfile
 
     container_name: medical_ai_system
@@ -50,10 +56,11 @@ services:
 
     environment:
       - PYTHONUNBUFFERED=1
-      - OLLAMA_BASE_URL=http://ollama:11434
+      - DOCKER_ENV=true   # ✅ FIXED
 
     depends_on:
-      - ollama
+      ollama:
+        condition: service_healthy   # ✅ better than simple depends_on
 
     restart: always
 

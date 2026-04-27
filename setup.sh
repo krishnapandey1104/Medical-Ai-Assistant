@@ -30,8 +30,8 @@ curl -fsSL https://ollama.com/install.sh | sh
 # ----------------------------
 # Pull Models
 # ----------------------------
-ollama pull phi3
-ollama pull llama3
+ollama pull phi3:latest 
+ollama pull llama3:latest
 
 echo "✅ Setup complete!"
 echo "Run: streamlit run app.py"

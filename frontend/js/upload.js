@@ -100,10 +100,12 @@ async function uploadReport() {
     //  SUMMARY
     // ----------------------------
     let html = `
-            <div class="card">
-                <h3>🧠 AI Report Summary</h3>
-                <p>${data.summary || 'No summary available'}</p>
+        <div class="card">
+            <h3>🧠 AI Report Summary</h3>
+            <div class="summary-text">
+                ${(data.summary || 'No summary available').replace(/\n/g, "<br>")}
             </div>
+        </div>
         `;
 
     // ----------------------------
