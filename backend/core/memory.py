@@ -6,7 +6,7 @@ DB_PATH = "chat_memory.db"
 
 
 # =========================================================
-#  DB CONNECTION (OPTIMIZED)
+# DB CONNECTION
 # =========================================================
 def get_conn():
     conn = sqlite3.connect(DB_PATH, check_same_thread=False)
@@ -19,7 +19,7 @@ def get_conn():
 
 
 # =========================================================
-#  INIT DB
+# INIT DB (WITH MIGRATION FIX)
 # =========================================================
 def init_db():
     with get_conn() as conn:
@@ -33,7 +33,7 @@ def init_db():
             )
         """)
 
-        # DEFAULT USER (ONLY ONCE)
+        # DEFAULT USER
         c.execute("SELECT id FROM users WHERE id='user1'")
         if not c.fetchone():
             hashed = bcrypt.hashpw("test".encode(), bcrypt.gensalt())
@@ -42,15 +42,22 @@ def init_db():
                 ("user1", hashed)
             )
 
-        # SESSIONS
+        # SESSIONS (WITH created_at)
         c.execute("""
             CREATE TABLE IF NOT EXISTS sessions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id TEXT,
                 title TEXT,
+                created_at TEXT,
                 FOREIGN KEY(user_id) REFERENCES users(id)
             )
         """)
+
+        # SAFE MIGRATION (if old DB exists)
+        try:
+            c.execute("ALTER TABLE sessions ADD COLUMN created_at TEXT")
+        except:
+            pass
 
         # MESSAGES
         c.execute("""
@@ -115,9 +122,20 @@ def authenticate_user(user_id, password):
 
 
 # =========================================================
-# SESSIONS
+# SESSION HELPERS
 # =========================================================
-def create_session(user_id, title="New Chat"):
+def validate_session(session_id):
+    with get_conn() as conn:
+        row = conn.execute(
+            "SELECT id FROM sessions WHERE id=?",
+            (session_id,)
+        ).fetchone()
+
+        if not row:
+            raise Exception("Invalid session ID")
+
+
+def create_session(user_id="user1", title="New Chat"):
     with get_conn() as conn:
 
         # ensure user exists
@@ -199,7 +217,7 @@ def add_message(session_id, role, content):
             (session_id, role, content, datetime.now(timezone.utc).isoformat())
         )
 
-        #  AUTO TITLE (FIRST USER MESSAGE)
+        # AUTO TITLE (first user message)
         if role == "user":
             count = conn.execute(
                 "SELECT COUNT(*) as c FROM messages WHERE session_id=?",
@@ -207,13 +225,14 @@ def add_message(session_id, role, content):
             ).fetchone()["c"]
 
             if count == 1:
-                title = content[:30]  # first 30 chars
+                title = content[:30]
                 conn.execute(
                     "UPDATE sessions SET title=? WHERE id=?",
                     (title, session_id)
                 )
 
         conn.commit()
+
 
 def get_messages(session_id):
     with get_conn() as conn:
@@ -224,13 +243,13 @@ def get_messages(session_id):
 
         return [{"role": r["role"], "content": r["content"]} for r in rows]
 
+
 # =========================================================
-#  REPORT STORAGE
+# REPORTS
 # =========================================================
 def save_report(session_id, report_text):
     with get_conn() as conn:
 
-        # validate session
         row = conn.execute(
             "SELECT id FROM sessions WHERE id=?",
             (session_id,)
@@ -244,7 +263,7 @@ def save_report(session_id, report_text):
 
         conn.execute(
             "INSERT INTO reports (session_id, report_text, created_at) VALUES (?, ?, ?)",
-            (session_id, report_text,  datetime.now(timezone.utc).isoformat())
+            (session_id, report_text, datetime.now(timezone.utc).isoformat())
         )
 
         conn.commit()
@@ -258,7 +277,3 @@ def get_latest_report(session_id):
         ).fetchone()
 
         return row["report_text"] if row else ""
-
-
-
-

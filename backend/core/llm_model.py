@@ -40,30 +40,52 @@ def detect_emergency(text):
 #  OLLAMA CALL (OPTIMIZED )
 # =========================================================
 def call_ollama(model, prompt, timeout=300):
-
     try:
+
+    #=======================
+    # dynamic token
+    #=======================
+        if len(prompt)>2000: # report / long input
+            num_predict = 1500
+            num_ctx = 8192
+        else: # normal chat
+            num_predict = 500
+            num_ctx = 2048
+        #===============
+        # call
+        #==============
+
         response = requests.post(
-            f"{OLLAMA_URL}/api/generate",
+            f"{OLLAMA_URL}/api/chat",
             json={
                 "model": model,
-                "prompt": prompt[:1500],   # limit size
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are a helpful and safe medical assistant."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
                 "stream": False,
                 "options": {
                     "temperature": GEN_CONFIG["temperature"],
-                    "num_predict": 400,     # limit tokens for faster response
-                    "num_ctx": 2048,         # prevent overload ---> before 1024 and now 2048 for better report handling
-                    "num_thread": 4
+                    "num_predict": num_predict,             #400,
+                    "num_ctx": num_ctx       #2048
                 }
             },
             timeout=timeout
         )
 
         if response.status_code != 200:
-            print(f"❌ HTTP ERROR: {response.status_code}")
+            print(f"❌ HTTP ERROR: {response.status_code}", response.text)
             return ""
 
         data = response.json()
-        return data.get("response", "").strip()
+
+        return data.get("message", {}).get("content", "").strip()
 
     except Exception as e:
         print(f"❌ {model} ERROR:", e)

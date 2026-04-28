@@ -239,17 +239,20 @@ async function sendMessage() {
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
         message: text,
-        session_id: Number(session_id)   // FIXED
+        session_id: session_id  // FIXED
       })
     });
 
     const data = await res.json();
+    session_id = data.session_id
 
     loading.remove();
 
     const response = data?.response || "⚠️ No response";
 
     addMessage(response, "bot");
+    
+    print("DEBUG RESPONSE: ", response)
 
     chatHistory.push({ role: "user", content: text });
     chatHistory.push({ role: "assistant", content: response });

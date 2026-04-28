@@ -71,6 +71,15 @@ cd docker
 docker-compose up -d --build
 docker exec -it ollama ollama pull llama3
 docker exec -it ollama ollama pull phi3
+#check ollama
+docker exec -it ollama ollama list
+
+# check images and container
+docker ps
+
+# run
+docker logs medical_ai_system
+
 
 # Open App
 

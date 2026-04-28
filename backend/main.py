@@ -6,7 +6,7 @@ from pydantic import BaseModel
 import os
 from contextlib import asynccontextmanager
 
-from backend.core.image_ocr import extract_text, is_valid_medical_text
+from backend.core.image_ocr import extract_text
 from backend.agents.agent_controller import agent_controller
 from backend.core.memory import (
     init_db,
@@ -16,11 +16,11 @@ from backend.core.memory import (
     save_report,
     get_latest_report,
     get_sessions
-    )
-# ===============================
-#  LIFESPAN (NEW WAY)
-# ===============================
+)
 
+# ===============================
+# LIFESPAN
+# ===============================
 @asynccontextmanager
 async def lifespan(app):
     print("🚀 Starting server...")
@@ -28,9 +28,9 @@ async def lifespan(app):
     yield
     print("🛑 Shutting down...")
 
-# =========================================================
-#  INIT APP
-# =========================================================
+# ===============================
+# INIT APP
+# ===============================
 app = FastAPI(
     title="AI Medical Assistant",
     lifespan=lifespan
@@ -41,19 +41,9 @@ frontend_path = os.path.join(BASE_DIR, "frontend")
 
 app.mount("/static", StaticFiles(directory=frontend_path), name="static")
 
-
-# =========================================================
-#  STARTUP
-# =========================================================
-# @app.on_event("startup")
-# def startup():
-#     print("🚀 Starting server...")
-#     init_db()
-
-
-# =========================================================
-#  CORS
-# ========================================================
+# ===============================
+# CORS
+# ===============================
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -62,44 +52,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-# =========================================================
-#  HEALTH
-# =========================================================
-@app.get("/health")
-def health():
-    return {"status": "ok"}
-
-
-# =========================================================
-#  HOME
-# =========================================================
-@app.get("/")
-def home():
-    return FileResponse(os.path.join(frontend_path, "dashboard.html"))
-
-
-# =========================================================
-#  medicines route
-# =========================================================
-@app.get("/medicines")
-def medicines():
-    return {"data": []}
-
-
-# =========================================================
-#  MODELS
-# =========================================================
+# ===============================
+# MODELS
+# ===============================
 class ChatRequest(BaseModel):
     message: str
-    session_id: int
+    session_id: int | None = None
 
 
-# =========================================================
-#  VALIDATION
-# =========================================================
+# ===============================
+# VALIDATION
+# ===============================
 def validate_session(session_id: int):
-
     if not session_id or session_id <= 0:
         raise HTTPException(400, "Invalid session ID")
 
@@ -120,9 +84,20 @@ def validate_file(filename: str):
         raise HTTPException(400, "Unsupported file type")
 
 
-# =========================================================
-#  SESSION
-# =========================================================
+# ===============================
+# ROUTES
+# ===============================
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+
+@app.get("/")
+def home():
+    return FileResponse(os.path.join(frontend_path, "dashboard.html"))
+
+
 @app.get("/session")
 def new_session():
     session_id = create_session("user1")
@@ -130,30 +105,36 @@ def new_session():
     return {"session_id": session_id}
 
 
-# =========================================================
-#  CHAT
-# =========================================================
+# ===============================
+# CHAT (FIXED)
+# ===============================
 @app.post("/chat")
 async def chat(data: ChatRequest):
 
     try:
-        validate_session(data.session_id)
+        # ✅ FIXED SESSION HANDLING
+        if not data.session_id:
+            session_id = create_session("user1")
+        else:
+            session_id = int(data.session_id)
+
+        validate_session(session_id)
         validate_message(data.message)
 
         print("\n💬 USER:", data.message)
 
-        add_message(data.session_id, "user", data.message)
+        add_message(session_id, "user", data.message)
 
-        history = get_messages(data.session_id)
-        report_text = get_latest_report(data.session_id) or ""
+        history = get_messages(session_id)
+        report_text = get_latest_report(session_id) or ""
 
-        #  UPDATED (ONLY CHANGE)
+        # 🤖 AI CALL
         response = agent_controller(
             question=data.message,
             report_text=report_text,
             user_id="user1",
             messages=history,
-            structured_data=[]   #  ADDED
+            structured_data=[]
         )
 
         # fallback
@@ -165,29 +146,35 @@ async def chat(data: ChatRequest):
                 report_text="",
                 user_id="user1",
                 messages=[],
-                structured_data=[]   #  ADDED
+                structured_data=[]
             )
 
             if not response:
                 response = "⚠️ AI couldn't generate a response. Try again."
 
-        add_message(data.session_id, "assistant", response)
+        add_message(session_id, "assistant", response)
 
-        print(f"✅ RESPONSE READY (session {data.session_id})")
+        print(f"✅ RESPONSE READY (session {session_id})")
 
-        return {"response": response}
+        return {
+            "response": response,
+            "session_id": session_id
+        }
 
     except HTTPException as e:
         raise e
 
     except Exception as e:
         print("❌ CHAT ERROR:", e)
-        return {"response": f"⚠️ Error: {str(e)}"}
+        return {
+            "response": f"⚠️ Error: {str(e)}",
+            "session_id": data.session_id
+        }
 
 
-# =========================================================
-#  HISTORY
-# =========================================================
+# ===============================
+# HISTORY
+# ===============================
 @app.get("/history/{session_id}")
 def get_history(session_id: int):
 
@@ -204,60 +191,25 @@ def get_history(session_id: int):
         return {"history": []}
 
 
-# @app.get("/sessions")
-# def sessions():
-#     return {"sessions": get_sessions("user1")}
-
-
-# @app.post("/pin/{session_id}")
-# def pin(session_id: int):
-#     pin_session(session_id, True)
-#     return {"message": "pinned"}
-
-
-# class RenameRequest(BaseModel):
-#     title: str
-
-
-# @app.post("/rename/{session_id}")
-# def rename(session_id: int, data: RenameRequest):
-#     rename_session(session_id, data.title)
-#     return {"message": "renamed"}
-
-
-# @app.delete("/delete/{session_id}")
-# def delete(session_id: int):
-#     delete_session(session_id)
-#     return {"message": "deleted"}
-
-
-
-
-
-# =========================================================
-#  UPLOAD (AUTO SESSION)
-# =========================================================
+# ===============================
+# UPLOAD
+# ===============================
 @app.post("/upload")
-async def upload_auto(file: UploadFile = File(None),
-                    session_id: int = Form(None)):
+async def upload_auto(
+    file: UploadFile = File(...),
+    session_id: int = Form(None)
+):
 
     try:
-        #  BETTER ERROR MESSAGE
-        if file is None:
-            raise HTTPException(
-                status_code=400,
-                detail="❌ No file received. Use form-data key = 'file'"
-            )
-
         validate_file(file.filename)
 
-        # file size check
         file_bytes = await file.read()
         if len(file_bytes) > 10 * 1024 * 1024:
             raise HTTPException(400, "File too large (max 10MB)")
         await file.seek(0)
 
-        if session_id is None:  
+        # AUTO SESSION
+        if session_id is None:
             session_id = create_session("user1")
 
         print(f"\n📄 UPLOAD: {file.filename} (session {session_id})")
@@ -270,16 +222,11 @@ async def upload_auto(file: UploadFile = File(None),
         formatted = result.get("formatted", "")
 
         if not text.strip() and not tables:
-            raise HTTPException(
-                400,
-                "⚠️ Unable to read this report clearly."
-            )
+            raise HTTPException(400, "⚠️ Could not read report")
 
         save_report(session_id, text)
 
-
-        # ----------- AI ANALYSIS ---------
-
+        # 🤖 AI ANALYSIS
         summary = agent_controller(
             question="Analyze medical report",
             report_text=text,
@@ -287,9 +234,6 @@ async def upload_auto(file: UploadFile = File(None),
             messages=[],
             structured_data=tables
         )
-
-
-        #--------------------- RESPONSE ----------------
 
         return {
             "session_id": session_id,
@@ -307,10 +251,9 @@ async def upload_auto(file: UploadFile = File(None),
         raise HTTPException(500, f"Report analysis failed: {str(e)}")
 
 
-        
-# =========================================================
-#  OPTIONAL
-# =========================================================
+# ===============================
+# OPTIONAL FEATURES
+# ===============================
 cart = []
 
 @app.post("/cart/add")
@@ -335,5 +278,3 @@ def book(doc: dict):
 @app.get("/doctor")
 def get_doc():
     return appointments
-
-
